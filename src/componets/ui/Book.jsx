@@ -6,28 +6,27 @@ import Price from './Price'
 
 const Book = ({ book }) => {
     const [img, setImg] = useState();
-
-    const mountedRef = useRef(true);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const image = new Image();
         image.src = book.url;
         image.onload = () => {
-            setTimeout(() => {
-            if (mountedRef.current)
             setImg(image);
-            })
-            
-        };
-        return () => {
-        mountedRef.current = false;
-        }
-    })
+            setLoading(false)
+            };
+        }, [book.url]);
 
     return(
        <div className="book">
-        {
-            img ? (
+        {loading ? (
+            <>
+            <div className="book__img--skeleton"></div>
+            <div className="skeleton book__title--skeleton"></div>
+            <div className="skeleton book__rating--skeleton"></div>
+            <div className="skeleton book__price--skeleton"></div>
+            </>
+        ) : (
             <>
              <Link to={`/books/${book.id}`}>
         <figure className="book__img--wrapper">
@@ -45,16 +44,7 @@ const Book = ({ book }) => {
         <Price salePrice={book.salePrice} 
         originalPrice={book.originalPrice}/>
             </>
-            ) : (
-                <>
-            <div className="book__img--skeleton">
-            <div className="skeleton book__title--skeleton"></div>
-            <div className="skeleton book__rating--skeleton"></div>
-            <div className="skeleton book__price--skeleton"></div>
-        </div>
-        </>
-            )
-        }          
+        )}          
     </div> 
     )
 }
